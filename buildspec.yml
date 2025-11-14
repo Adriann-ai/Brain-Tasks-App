@@ -7,8 +7,8 @@ env:
 phases:
   install:
     commands:
-      - sudo apt update
-      - sudo apt install docker.io -y
+      - apt update -y
+      - apt install docker.io -y
       - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin $IMAGE_REPO
 
   build:
