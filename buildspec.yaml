@@ -44,11 +44,13 @@ phases:
 
       # Fetch image digest from ECR
       - echo "Fetching image digest..."
-      - IMAGE_DIGEST=$(aws ecr describe-images \
+      - |
+        IMAGE_DIGEST=$(aws ecr describe-images \
           --repository-name adrian \
           --image-ids imageTag=$CODEBUILD_BUILD_NUMBER \
           --query 'imageDetails[0].imageDigest' \
           --output text)
+
       - echo "Image digest is: $IMAGE_DIGEST"
 
       # Update YAML manifest with digest dynamically
@@ -61,5 +63,3 @@ phases:
       - kubectl apply -f dist/manifest/service.yaml
 
       - echo "Deployment completed successfully!"
-
-
