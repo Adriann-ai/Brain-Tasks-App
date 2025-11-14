@@ -15,7 +15,9 @@ phases:
 
   build:
     commands:
-      - export TAG="$CODEBUILD_BUILD_NUMBER"
+      - |
+        TAG="$CODEBUILD_BUILD_NUMBER"
+        export TAG
       - echo "Using image tag: $TAG"
       - docker build -t adrian:$TAG .
       - docker tag adrian:$TAG $IMAGE_REPO:$TAG
@@ -25,3 +27,4 @@ phases:
       - echo "Pushing image to Amazon ECR..."
       - docker push $IMAGE_REPO:$TAG
       - echo "Successfully pushed $IMAGE_REPO:$TAG"
+
