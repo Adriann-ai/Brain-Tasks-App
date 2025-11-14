@@ -22,5 +22,5 @@ phases:
   post_build:
     commands:
       - echo "Pushing image to Amazon ECR..."
-      - docker push $IMAGE_REPO:$TAG
-      - echo "Successfully pushed $IMAGE_REPO:$TAG"
+      - docker push $IMAGE_REPO:$CODEBUILD_BUILD_NUMBER
+      - echo "Successfully pushed $IMAGE_REPO:$CODEBUILD_BUILD_NUMBER"
