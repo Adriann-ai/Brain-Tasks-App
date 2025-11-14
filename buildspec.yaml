@@ -3,7 +3,7 @@ version: 0.2
 env:
   variables:
     IMAGE_REPO: "300615130618.dkr.ecr.ap-south-1.amazonaws.com/adrian"
-
+    TAG: "$CODEBUILD_BUILD_NUMBER"
 phases:
   install:
     commands:
@@ -15,10 +15,6 @@ phases:
 
   build:
     commands:
-      - |
-        TAG="$CODEBUILD_BUILD_NUMBER"
-        export TAG
-        |
       - echo "Using image tag: $TAG"
       - docker build -t adrian:$TAG .
       - docker tag adrian:$TAG $IMAGE_REPO:$TAG
