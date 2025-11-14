@@ -42,14 +42,9 @@ phases:
       - echo "Pushing image to Amazon ECR..."
       - docker push $IMAGE_REPO:$CODEBUILD_BUILD_NUMBER
 
-      # Fetch image digest from ECR
+      # Fetch image digest from ECR (SINGLE LINE - YAML SAFE)
       - echo "Fetching image digest..."
-      - |
-        IMAGE_DIGEST=$(aws ecr describe-images \
-          --repository-name adrian \
-          --image-ids imageTag=$CODEBUILD_BUILD_NUMBER \
-          --query 'imageDetails[0].imageDigest' \
-          --output text)
+      - IMAGE_DIGEST=$(aws ecr describe-images --repository-name adrian --image-ids imageTag=$CODEBUILD_BUILD_NUMBER --query 'imageDetails[0].imageDigest' --output text)
 
       - echo "Image digest is: $IMAGE_DIGEST"
 
@@ -63,3 +58,4 @@ phases:
       - kubectl apply -f dist/manifest/service.yaml
 
       - echo "Deployment completed successfully!"
+
