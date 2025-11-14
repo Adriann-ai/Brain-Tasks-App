@@ -16,7 +16,7 @@ phases:
         aws ecr get-login-password --region ap-south-1 \
         | docker login --username AWS --password-stdin $IMAGE_REPO
       - echo "Updating kubeconfig for EKS..."
-      - aws eks update-kubeconfig --region ap-south-1 --name test-eks  
+      - aws eks update-kubeconfig --region ap-south-1 --name my-cluster  
 
   build:
     commands:
