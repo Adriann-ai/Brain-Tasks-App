@@ -23,9 +23,7 @@ phases:
 
       # Login to ECR
       - echo "Logging in to Amazon ECR..."
-      - |
-        aws ecr get-login-password --region $AWS_REGION \
-        | docker login --username AWS --password-stdin $IMAGE_REPO
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $IMAGE_REPO
 
       # Configure EKS access
       - echo "Updating kubeconfig..."
