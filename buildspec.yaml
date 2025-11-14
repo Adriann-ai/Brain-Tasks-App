@@ -3,24 +3,37 @@ version: 0.2
 env:
   variables:
     IMAGE_REPO: "300615130618.dkr.ecr.ap-south-1.amazonaws.com/adrian"
-    
+    AWS_REGION: "ap-south-1"
+    CLUSTER_NAME: "my-cluster"
+    DEPLOYMENT_NAME: "adrian-deploy"
+    CONTAINER_NAME: "adrian-container"
+
 phases:
   install:
     commands:
       - apt update -y
       - apt install docker.io -y
+
+      # Install kubectl
+      - echo "Installing kubectl..."
       - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
       - chmod +x kubectl
       - mv kubectl /usr/local/bin/
+      - kubectl version --client
+
+      # Login to ECR
+      - echo "Logging in to Amazon ECR..."
       - |
-        aws ecr get-login-password --region ap-south-1 \
+        aws ecr get-login-password --region $AWS_REGION \
         | docker login --username AWS --password-stdin $IMAGE_REPO
-      - echo "Updating kubeconfig for EKS..."
-      - aws eks update-kubeconfig --region ap-south-1 --name my-cluster  
+
+      # Configure EKS access
+      - echo "Updating kubeconfig..."
+      - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
 
   build:
     commands:
-      
+      - echo "Building Docker image..."
       - docker build -t adrian .
       - docker tag adrian $IMAGE_REPO:$CODEBUILD_BUILD_NUMBER
 
@@ -28,4 +41,25 @@ phases:
     commands:
       - echo "Pushing image to Amazon ECR..."
       - docker push $IMAGE_REPO:$CODEBUILD_BUILD_NUMBER
-      - echo "Successfully pushed $IMAGE_REPO:$CODEBUILD_BUILD_NUMBER"
+
+      # Fetch image digest from ECR
+      - echo "Fetching image digest..."
+      - IMAGE_DIGEST=$(aws ecr describe-images \
+          --repository-name adrian \
+          --image-ids imageTag=$CODEBUILD_BUILD_NUMBER \
+          --query 'imageDetails[0].imageDigest' \
+          --output text)
+      - echo "Image digest is: $IMAGE_DIGEST"
+
+      # Update YAML manifest with digest dynamically
+      - echo "Updating deployment manifest with digest..."
+      - sed -i "s|IMAGE_PLACEHOLDER|$IMAGE_REPO@$IMAGE_DIGEST|g" dist/manifest/deployment.yaml
+
+      # Apply manifest files
+      - echo "Applying Kubernetes manifests..."
+      - kubectl apply -f dist/manifest/deployment.yaml
+      - kubectl apply -f dist/manifest/service.yaml
+
+      - echo "Deployment completed successfully!"
+
+
