@@ -9,9 +9,14 @@ phases:
     commands:
       - apt update -y
       - apt install docker.io -y
+      - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      - chmod +x kubectl
+      - mv kubectl /usr/local/bin/
       - |
         aws ecr get-login-password --region ap-south-1 \
         | docker login --username AWS --password-stdin $IMAGE_REPO
+      - echo "Updating kubeconfig for EKS..."
+      - aws eks update-kubeconfig --region ap-south-1 --name test-eks  
 
   build:
     commands:
