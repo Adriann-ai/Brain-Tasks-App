@@ -32,6 +32,8 @@ phases:
       - "sed -i 's|IMAGE_PLACEHOLDER|$IMAGE_REPO@$IMAGE_DIGEST|g' dist/manifest/deployment.yaml"
       - "echo 'Final deployment manifest:'"
       - "cat dist/manifest/deployment.yaml"
+      - echo "Checking kubectl connectivity..."
+      - kubectl get nodes
       - "echo 'Applying deployment manifest...'"
       - "kubectl apply -f dist/manifest/deployment.yaml"
       - "echo 'Applying service manifest...'"
