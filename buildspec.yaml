@@ -18,6 +18,7 @@ phases:
       - |
         TAG="$CODEBUILD_BUILD_NUMBER"
         export TAG
+        |
       - echo "Using image tag: $TAG"
       - docker build -t adrian:$TAG .
       - docker tag adrian:$TAG $IMAGE_REPO:$TAG
