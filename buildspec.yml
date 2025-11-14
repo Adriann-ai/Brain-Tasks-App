@@ -9,11 +9,13 @@ phases:
     commands:
       - apt update -y
       - apt install docker.io -y
-      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin $IMAGE_REPO
+      - |
+        aws ecr get-login-password --region ap-south-1 \
+        | docker login --username AWS --password-stdin $IMAGE_REPO
 
   build:
     commands:
-      - TAG=$CODEBUILD_BUILD_NUMBER
+      - export TAG="$CODEBUILD_BUILD_NUMBER"
       - echo "Using image tag: $TAG"
       - docker build -t adrian:$TAG .
       - docker tag adrian:$TAG $IMAGE_REPO:$TAG
