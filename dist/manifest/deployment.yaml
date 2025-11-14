@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adrian-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: adrian
+  template:
+    metadata:
+      labels:
+        app: adrian
+    spec:
+      containers:
+        - name: adrian-container
+          image: 300615130618.dkr.ecr.ap-south-1.amazonaws.com/adrian:latest
+          ports:
+            - containerPort: 3000
+
+
+     
