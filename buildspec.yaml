@@ -23,24 +23,19 @@ phases:
       - docker tag adrian $IMAGE_REPO:$CODEBUILD_BUILD_NUMBER
 
   post_build:
-    commands:
-      - echo "Pushing Docker image..."
-      - docker push $IMAGE_REPO:$CODEBUILD_BUILD_NUMBER
+  commands:
+    - echo "Pushing Docker image..."
+    - docker push $IMAGE_REPO:$CODEBUILD_BUILD_NUMBER
+    - echo "Fetching image digest..."
+    - IMAGE_DIGEST=$(aws ecr describe-images --repository-name adrian --image-ids imageTag=$CODEBUILD_BUILD_NUMBER --query 'imageDetails[0].imageDigest' --output text) && echo "Digest: $IMAGE_DIGEST"
+    - echo "Updating deployment manifest with digest..."
+    - sed -i "s|IMAGE_PLACEHOLDER|$IMAGE_REPO@$IMAGE_DIGEST|g" dist/manifest/deployment.yaml
+    - echo "Final deployment manifest:"
+    - cat dist/manifest/deployment.yaml
+    - echo "Applying deployment manifest..."
+    - kubectl apply -f dist/manifest/deployment.yaml
+    - echo "Applying service manifest..."
+    - kubectl apply -f dist/manifest/service.yaml
+    - echo "Deployment completed successfully!"
 
-      - echo "Fetching image digest..."
-      - IMAGE_DIGEST=$(aws ecr describe-images --repository-name adrian --image-ids imageTag=$CODEBUILD_BUILD_NUMBER --query 'imageDetails[0].imageDigest' --output text) && echo "Digest: $IMAGE_DIGEST"
-
-      - echo "Updating deployment manifest with digest..."
-      - sed -i "s|IMAGE_PLACEHOLDER|$IMAGE_REPO@$IMAGE_DIGEST|g" dist/manifest/deployment.yaml
-
-      - echo "Final deployment manifest:"
-      - cat dist/manifest/deployment.yaml
-
-      - echo "Applying deployment manifest..."
-      - kubectl apply -f dist/manifest/deployment.yaml
-
-      - echo "Applying service manifest..."
-      - kubectl apply -f dist/manifest/service.yaml
-
-      - echo "Deployment completed successfully!"
 
