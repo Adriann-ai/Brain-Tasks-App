@@ -11,21 +11,25 @@ phases:
     commands:
       - apt update -y
       - apt install docker.io -y
+      - echo "Installing kubectl..."
       - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
       - chmod +x kubectl
       - mv kubectl /usr/local/bin/kubectl
-      - "aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $IMAGE_REPO"
-      
+      - echo "Logging in to ECR..."
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $IMAGE_REPO
 
   build:
     commands:
-      - "docker build -t adrian ."
-      - "docker tag adrian $IMAGE_REPO:v1"
+      - echo "Pulling nginx image..."
+      - docker pull nginx:latest
+      - echo "Tagging nginx image for ECR..."
+      - docker tag nginx:latest $IMAGE_REPO:v1
 
   post_build:
     commands:
-      - "echo 'Pushing Docker image...'"
-      - "docker push $IMAGE_REPO:v1"
-      - "echo 'Final deployment manifest:'"
-      - "cat dist/manifest/deployment.yaml"
-      - "aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME"
+      - echo "Pushing Docker image to ECR..."
+      - docker push $IMAGE_REPO:v1
+      - echo "Final deployment manifest:"
+      - cat dist/manifest/deployment.yaml
+      - echo "Updating kubeconfig for EKS cluster..."
+      - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
