@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: adrian-deploy
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: adrian
@@ -13,8 +13,8 @@ spec:
         app: adrian
     spec:
       containers:
-        - name: adrian-container
-          image: IMAGE_PLACEHOLDER
+        - name: adrian
+          image: 300615130618.dkr.ecr.ap-south-1.amazonaws.com/adrian:latest
           ports:
             - containerPort: 80
 
