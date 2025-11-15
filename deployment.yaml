@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: adrian
-          image: 300615130618.dkr.ecr.ap-south-1.amazonaws.com/adrian:v1
+          image: httpd:latest
           ports:
             - containerPort: 80
 
