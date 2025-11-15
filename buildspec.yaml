@@ -20,12 +20,12 @@ phases:
   build:
     commands:
       - "docker build -t adrian ."
-      - "docker tag adrian $IMAGE_REPO:$CODEBUILD_BUILD_NUMBER"
+      - "docker tag adrian $IMAGE_REPO:v1"
 
   post_build:
     commands:
       - "echo 'Pushing Docker image...'"
-      - "docker push $IMAGE_REPO:$CODEBUILD_BUILD_NUMBER"
+      - "docker push $IMAGE_REPO:v1"
       - "echo 'Final deployment manifest:'"
       - "cat dist/manifest/deployment.yaml"
       - "aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME"
