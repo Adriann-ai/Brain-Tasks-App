@@ -16,7 +16,7 @@ spec:
         - name: adrian-container
           image: IMAGE_PLACEHOLDER
           ports:
-            - containerPort: 3000
+            - containerPort: 80
 
 
      
