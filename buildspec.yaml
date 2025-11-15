@@ -15,7 +15,7 @@ phases:
       - chmod +x kubectl
       - mv kubectl /usr/local/bin/kubectl
       - "aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $IMAGE_REPO"
-      - "aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME"
+      
 
   build:
     commands:
@@ -33,6 +33,7 @@ phases:
       - "echo 'Final deployment manifest:'"
       - "cat dist/manifest/deployment.yaml"
       - echo "Checking kubectl connectivity..."
+      - "aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME"
       - kubectl get nodes
       - "echo 'Applying deployment manifest...'"
       - "kubectl apply -f dist/manifest/deployment.yaml"
