@@ -34,7 +34,7 @@ phases:
       - "cat dist/manifest/deployment.yaml"
       - echo "Checking kubectl connectivity..."
       - "aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME"
-      - kubectl get nodes
+      
       - "echo 'Applying deployment manifest...'"
       - "kubectl apply -f dist/manifest/deployment.yaml"
       - "echo 'Applying service manifest...'"
