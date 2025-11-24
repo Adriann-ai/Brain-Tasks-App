@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    IMAGE_REPO: "300615130618.dkr.ecr.ap-south-1.amazonaws.com/adrian"
+    IMAGE_REPO: "300615130618.dkr.ecr.ap-south-1.amazonaws.com/brain-task-app"
 
 phases:
   install:
