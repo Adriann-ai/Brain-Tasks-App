@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: brain-task-app
+  name: brain-task-app-deployment
 spec:
   replicas: 2
   selector:
